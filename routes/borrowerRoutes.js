@@ -1,14 +1,10 @@
 const express = require('express');
+const { addBorrower, updateBorrower, getBorrowers, deleteBorrower } = require('../controllers/borrowerController');
 const router = express.Router();
-const {
-    addBorrower,
-    updateBorrower,
-} = require('../controllers/borrowerController');
 
-// Add a new borrower
 router.post('/', addBorrower);
-
-// Update an existing borrower
 router.put('/:borrowerId', updateBorrower);
+router.get('/', getBorrowers);
+router.delete('/:borrowerId', deleteBorrower);
 
 module.exports = router;

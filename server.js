@@ -1,26 +1,24 @@
 const express = require('express');
-const dotenv = require('dotenv');
-const connectDB = require('./config/db');
-const routes = require('./routes');
-
-
-
-dotenv.config();
-
-
-connectDB();
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const { errorHandler } = require('./middleware/errorHandler');
+require('dotenv').config();
 
 const app = express();
 
+// Middleware
+app.use(bodyParser.json());
 
-app.use(express.json());
+// Routes
+app.use('/api/authors', require('./routes/authorRoutes'));
+app.use('/api/books', require('./routes/bookRoutes'));
+app.use('/api/borrowers', require('./routes/borrowerRoutes'));
+app.use('/api/borrow-return', require('./routes/borrowReturnRoutes'));
 
+// Global error handler
+app.use(errorHandler);
 
-app.use('/api', routes);
-
-
-
-const PORT = process.env.PORT || 5000;
-
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Database Connection
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => app.listen(3000, () => console.log('Server running on port 3000')))
+  .catch((err) => console.error('Database connection failed:', err));
